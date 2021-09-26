@@ -5,4 +5,6 @@ order: 4
 ---
 
 
-> **Note**: Add Markdown syntax content to file `_tabs/about.md` and it will show up on this page.
+欢迎来到一个东漂小码农的小树洞。
+
+这是本站的[GitHub Repo](https://github.com/akinaru-lu/akinaru-lu.github.io)，若您在本站发现什么错误以及问题欢迎联系。
