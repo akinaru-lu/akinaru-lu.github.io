@@ -11,7 +11,7 @@ tags: ruby rails
 目前公司里使用Capistrano来进行Ruby on Rails的部署，但是在部署之后遇到了没有读取新的环境变量的问题。然后谷歌了一圈，了解了Unicorn的进程模型和信号处理，Dotenv库是如何处理环境变量的，等等。最后的解决方法很简单，改一行代码就搞定了，但是这个过程花了不少时间。
 
 ### 多进程模型
-单master-多worker模式，由master加载源代码，各个worker fork自master，所以是master的一份复制。实际的负载也是由worker来处理的。而worker进程间的负载均衡则交给操作系统去做[<sup>1</sup>](#refer1)。
+单master-多worker模式，由master加载源代码，各个worker fork自master，所以是master的一份复制。实际的负载也是由worker来处理的。而worker进程间的负载均衡则交给操作系统去做[^ftn1]。
 
 ```
 I, [#65753]  INFO -- : worker=0 ready
@@ -24,7 +24,7 @@ I, [#65756]  INFO -- : worker=3 ready
 上述日志说unicorn启动后pid为65748的master进程和pid为65753, 65754, 65755, 65756的四个worker进程被创建了。然后在逻辑代码里打印`Process.pid`，可以看到打印的都是worker的pid，顺序随机。
 
 ### Unicorn优雅部署
-发送USR2信号给旧master，新master启动，然后从新master fork出新worker。到此还不算完，因为旧的进程还没停止，所以需要发送WINCH给旧的master来退出旧的worker，最后再发送QUIT给旧master，这样旧master和旧worker才全部退出，到此才算部署成功[<sup>2</sup>](#refer2)。
+发送USR2信号给旧master，新master启动，然后从新master fork出新worker。到此还不算完，因为旧的进程还没停止，所以需要发送WINCH给旧的master来退出旧的worker，最后再发送QUIT给旧master，这样旧master和旧worker才全部退出，到此才算部署成功[^ftn2]。
 
 ###### 进程派生关系
 ```
@@ -65,7 +65,7 @@ I, [#65748]  INFO -- : master complete
 
 我一开始在本地测试的时候由于只给old master发送了USR2信号，所以刷新页面后有时会看到旧版本的内容。
 
-不过Capistrano的做法是在`unicorn.rb`的after_fork hook里添加如下代码[<sup>3</sup>](#refer3)。
+不过Capistrano的做法是在`unicorn.rb`的after_fork hook里添加如下代码[^ftn3]。
 
 ```rb
 # unicorn.rb
@@ -99,15 +99,10 @@ Dotenv.overload(*env_files)
 ### 感想
 虽然这段时间踩了unicorn不少的坑，但我们最终是要部署到K8S上去的，优雅部署的工作都交给K8S去做了，就没太多unicorn的事了。果然这一个人的命运啊。。。
 
----
-
 ### 参考
 
-<div id="refer1"></div>
-- [1] [Configuring Puma, Unicorn and Passenger for Maximum Efficiency](https://www.speedshop.co/2017/10/12/appserver.html)
+[^ftn1]: [Configuring Puma, Unicorn and Passenger for Maximum Efficiency](https://www.speedshop.co/2017/10/12/appserver.html)
 
-<div id="refer2"></div>
-- [2] [unicorn/SIGNALS](https://github.com/defunkt/unicorn/blob/master/SIGNALS)
+[^ftn2]: [unicorn/SIGNALS](https://github.com/defunkt/unicorn/blob/master/SIGNALS)
 
-<div id="refer3"></div>
-- [3] [wiki/rails3/unicorn](https://tachesimazzoca.github.io/wiki/rails3/unicorn.html)
+[^ftn3]: [wiki/rails3/unicorn](https://tachesimazzoca.github.io/wiki/rails3/unicorn.html)
