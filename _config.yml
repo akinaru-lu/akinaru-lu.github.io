@@ -134,6 +134,11 @@ defaults:
       layout: page
       permalink: /:title/
       dynamic_title: true    # Hide title in mobile screens.
+  -
+    scope:
+      path: assets/img/gallery_photos
+    values:
+      gallery_photo: true
 
 sass:
   style: compressed
