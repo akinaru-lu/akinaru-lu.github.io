@@ -23,7 +23,7 @@ layout: page
 
 <div class="masonry">
   <div>
-    {% assign photos = site.static_files | where: "gallery_photo", true %}
+    {% assign photos = site.static_files | where: "gallery_photo", true | sort: 'modified_time' | reverse %}
     {% for photo in photos %}
       <div class="masonry-panel">
         {% responsive_image_block %}
