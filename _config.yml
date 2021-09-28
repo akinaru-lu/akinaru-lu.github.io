@@ -181,6 +181,9 @@ responsive_image:
     - width: 480
     - width: 800
 
+  base_path: assets/img/gallery_photos/original
+  output_path_format: assets/img/gallery_photos/resized/%{width}/%{basename}
+
   # [Optional, Default: false]
   # Rotate resized images depending on their EXIF rotation attribute. Useful for
   # working with JPGs directly from digital cameras and smartphones
