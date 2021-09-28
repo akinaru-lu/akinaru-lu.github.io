@@ -26,7 +26,11 @@ layout: page
     {% assign photos = site.static_files | where: "gallery_photo", true %}
     {% for photo in photos %}
       <div class="masonry-panel">
-        <img src="{{ photo.path | relative_url }}" src="{{ photo.path | relative_url }}" alt="{{ site.data.gallery_photos[photo.path].alt }}"/>
+        {% responsive_image_block %}
+          cache: true
+          path: {{ photo.path | slice: 1, photo.path.size }}
+          alt: {{ site.data.gallery_photos[photo.basename].alt }}
+        {% endresponsive_image_block %}
       </div>
     {% endfor %}
   </div>
