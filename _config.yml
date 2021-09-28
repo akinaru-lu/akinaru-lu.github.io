@@ -138,7 +138,7 @@ defaults:
       dynamic_title: true    # Hide title in mobile screens.
   -
     scope:
-      path: assets/img/gallery_photos
+      path: assets/img/gallery_photos/original
     values:
       gallery_photo: true
 
